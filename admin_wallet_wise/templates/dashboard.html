@@ -1,0 +1,323 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+  <div class="container mt-5 fade-up">
+    <div class="welcome-message fade-in">
+      <p class="mb-0">Aquí tienes un resumen de tus finanzas. Tu saldo actual es de <strong>${{ saldo_total|floatformat:2 }}</strong></p>
+       <button id="viewMovementsBtn" class="btn btn-primary">
+        <i class="bi bi-list-check"></i> Ver Todos los Movimientos
+      </button>
+    </div>
+
+    <div class="dashboard-header fade-up" style="animation-delay: 0.3s;">
+      <h1>Resumen Financiero</h1>
+    </div>
+
+    <div class="row fade-up" style="animation-delay: 0.6s;">
+      <!-- Card Entradas -->
+      <div class="col-md-6 mb-4">
+        <div class="card h-100 clickable-card" data-card="entradas">
+          <div class="card-header">Entradas</div>
+          <div class="card-body text-center">
+            <div class="summary-icon">💰</div>
+            <h2 class="card-title">${{ entradas_total|floatformat:2 }}</h2>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card Salidas -->
+      <div class="col-md-6 mb-4">
+         <div class="card h-100 clickable-card" data-card="salidas">
+          <div class="card-header">Salidas</div>
+          <div class="card-body text-center">
+            <div class="summary-icon">💸</div>
+            <h2 class="card-title">${{ salidas_total|floatformat:2 }}</h2>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card Ahorro -->
+      <div class="col-md-6 mb-4">
+         <div class="card h-100 clickable-card" data-card="ahorro">
+          <div class="card-header">Ahorro</div>
+          <div class="card-body text-center">
+            <div class="summary-icon">🏦</div>
+            <h2 class="card-title">${{ ahorro_total|floatformat:2 }}</h2>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card Inversiones -->
+      <div class="col-md-6 mb-4">
+        <div class="card h-100 clickable-card" data-card="inversiones">
+          <div class="card-header">Inversiones</div>
+          <div class="card-body text-center">
+            <div class="summary-icon">📈</div>
+            <h2 class="card-title">${{ inversiones_total|floatformat:2 }}</h2>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Card grande para gráfico -->
+    <div class="row fade-up" style="animation-delay: 0.9s;">
+      <div class="col-12">
+        <div class="card h-100" style="min-height: 350px;">
+          <div class="card-header">Gráfico</div>
+          <div class="card-body d-flex align-items-center justify-content-center">
+            <p class="text-muted">Aquí irá el gráfico</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer fade-in" style="animation-delay: 1.2s;">
+    <div class="container">
+      <p>© 2023 Wallet Wise - Todos los derechos reservados</p>
+      <p><a href="#">Política de Privacidad</a> | <a href="#">Términos de Servicio</a> | <a href="#">Soporte</a></p>
+    </div>
+  </div>
+
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <span id="closeModal" class="close">&times;</span>
+      <h2 id="modalTitle">Añadir movimiento</h2>
+      <!-- Cambiado a movementForm y corregidos los IDs -->
+      <form id="movementForm">
+        <!-- Campo oculto para el tipo de movimiento -->
+        <input type="hidden" id="movementType" name="movementType">
+
+        <div class="form-group">
+          <label for="movementName">Nombre</label>
+          <input type="text" id="movementName" name="movementName" required>
+        </div>
+        <div class="form-group">
+          <label for="movementAmount">Cantidad</label>
+          <input type="number" step="0.01" id="movementAmount" name="movementAmount" required>
+        </div>
+        <div class="form-group">
+          <label for="movementDate">Fecha</label>
+          <input type="date" id="movementDate" name="movementDate" required>
+        </div>
+        <button type="submit" class="btn btn-success">Guardar</button>
+      </form>
+    </div>
+    <!-- Nueva sección para movimientos (inicialmente oculta) -->
+    <div id="movementsSection" class="fade-up mt-4" style="display: none; animation-delay: 0.3s;">
+      <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+          <h3 class="mb-0">Todos los Movimientos</h3>
+          <div class="btn-group">
+            <button class="btn btn-outline-secondary filter-btn active" data-filter="all">Todos</button>
+            <button class="btn btn-outline-success filter-btn" data-filter="entradas">Entradas</button>
+            <button class="btn btn-outline-danger filter-btn" data-filter="salidas">Salidas</button>
+            <button class="btn btn-outline-primary filter-btn" data-filter="ahorro">Ahorro</button>
+            <button class="btn btn-outline-info filter-btn" data-filter="inversiones">Inversiones</button>
+          </div>
+        </div>
+        <div class="card-body">
+          <table class="table table-striped" id="movementsTable">
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Nombre</th>
+                <th>Tipo</th>
+                <th>Monto</th>
+              </tr>
+            </thead>
+            <tbody>
+              <!-- Los movimientos se cargarán dinámicamente via AJAX -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const modal = document.getElementById('modal');
+      const closeModalBtn = document.getElementById('closeModal');
+      const modalTitle = document.getElementById('modalTitle');
+      const movementForm = document.getElementById('movementForm');
+      const movementTypeInput = document.getElementById('movementType'); // Ya existe en HTML
+
+      const movementsSection = document.getElementById('movementsSection');
+      const viewMovementsBtn = document.getElementById('viewMovementsBtn');
+      const filterBtns = document.querySelectorAll('.filter-btn');
+      const movementsTableBody = document.querySelector('#movementsTable tbody');
+
+      // Mapeo de tipos de movimiento a títulos
+      const typeTitles = {
+        'entradas': 'Entrada de dinero',
+        'salidas': 'Salida de dinero',
+        'ahorro': 'Ahorro',
+        'inversiones': 'Inversión'
+      };
+
+      // Abrir modal al click en cards
+      document.querySelectorAll('.clickable-card').forEach(card => {
+        card.addEventListener('click', () => {
+          const cardType = card.getAttribute('data-card');
+          modalTitle.textContent = `Añadir ${typeTitles[cardType]}`;
+          movementTypeInput.value = cardType;
+          modal.style.display = 'block';
+          movementForm.reset();
+
+          // Enfocar el primer campo del formulario
+          document.getElementById('movementName').focus();
+        });
+      });
+
+      // Cerrar modal
+      closeModalBtn.addEventListener('click', () => {
+        modal.style.display = 'none';
+      });
+
+      // Cerrar modal al hacer clic fuera
+      window.addEventListener('click', (event) => {
+        if(event.target === modal) {
+          modal.style.display = 'none';
+        }
+      });
+
+      // Manejar submit del formulario
+      movementForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // Validar cantidad
+        const amount = parseFloat(document.getElementById('movementAmount').value);
+        if (isNaN(amount) || amount <= 0) {
+          alert('Por favor ingrese una cantidad válida mayor a cero');
+          return;
+        }
+
+        // Validar fecha
+        const dateInput = document.getElementById('movementDate').value;
+        if (!dateInput) {
+          alert('Por favor seleccione una fecha');
+          return;
+        }
+
+        // Preparar datos para enviar
+        const formData = new FormData();
+        formData.append('tipo', movementTypeInput.value);
+        formData.append('nombre', document.getElementById('movementName').value);
+        formData.append('monto', amount);
+        formData.append('fecha', dateInput);
+        formData.append('csrfmiddlewaretoken', '{{ csrf_token }}');
+
+        try {
+          // Mostrar indicador de carga
+          const submitBtn = movementForm.querySelector('button[type="submit"]');
+          submitBtn.disabled = true;
+          submitBtn.textContent = 'Guardando...';
+
+          // Enviar datos al servidor
+          const response = await fetch('/movements/add/', {
+            method: 'POST',
+            body: formData
+          });
+
+          if(response.ok) {
+            const result = await response.json();
+            if (result.success) {
+              // Actualizar los valores en las cards
+              updateCardValues(result.new_values);
+
+              // Mostrar notificación
+              showNotification('¡Movimiento registrado correctamente!', 'success');
+
+              // Cerrar modal
+              modal.style.display = 'none';
+            } else {
+              throw new Error(result.error || 'Error al guardar el movimiento');
+            }
+          } else {
+            throw new Error(`Error HTTP: ${response.status}`);
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          showNotification(`Error al guardar: ${error.message}`, 'error');
+        } finally {
+          // Restaurar botón
+          const submitBtn = movementForm.querySelector('button[type="submit"]');
+          submitBtn.disabled = false;
+          submitBtn.textContent = 'Guardar';
+        }
+      });
+
+      // Función para formatear números con separadores de miles
+      function formatNumber(number) {
+        return number.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      }
+
+      // Función para actualizar los valores de las cards (ÚNICA VERSIÓN)
+      function updateCardValues(newValues) {
+        // Actualizar saldo total
+        document.querySelector('.welcome-message strong').textContent =
+            `$${formatNumber(newValues.saldo_total)}`;
+
+        // Actualizar card de entradas
+        const entradasCard = document.querySelector('[data-card="entradas"]');
+        if (entradasCard) {
+            entradasCard.querySelector('.card-title').textContent =
+                `$${formatNumber(newValues.entradas)}`;
+        }
+
+        // Actualizar card de salidas
+        const salidasCard = document.querySelector('[data-card="salidas"]');
+        if (salidasCard) {
+            salidasCard.querySelector('.card-title').textContent =
+                `$${formatNumber(newValues.salidas)}`;
+        }
+
+        // Actualizar card de ahorro
+        const ahorroCard = document.querySelector('[data-card="ahorro"]');
+        if (ahorroCard) {
+            ahorroCard.querySelector('.card-title').textContent =
+                `$${formatNumber(newValues.ahorro)}`;
+        }
+
+        // Actualizar card de inversiones
+        const inversionesCard = document.querySelector('[data-card="inversiones"]');
+        if (inversionesCard) {
+            inversionesCard.querySelector('.card-title').textContent =
+                `$${formatNumber(newValues.inversiones)}`;
+        }
+      }
+
+      // Función para mostrar notificaciones
+      function showNotification(message, type) {
+        // Eliminar notificación previa si existe
+        const oldNotification = document.getElementById('movement-notification');
+        if (oldNotification) oldNotification.remove();
+
+        // Crear elemento de notificación
+        const notification = document.createElement('div');
+        notification.id = 'movement-notification';
+        notification.textContent = message;
+        notification.className = `notification ${type}`;
+
+        // Añadir al documento
+        document.body.appendChild(notification);
+
+        // Mostrar y luego desaparecer después de 3 segundos
+        setTimeout(() => {
+          notification.style.opacity = '1';
+          notification.style.transform = 'translateY(0)';
+        }, 100);
+
+        setTimeout(() => {
+          notification.style.opacity = '0';
+          notification.style.transform = 'translateY(-100%)';
+          setTimeout(() => notification.remove(), 500);
+        }, 3000);
+      }
+    });
+  </script>
+
+{% endblock %}
