@@ -46,7 +46,7 @@ Wallet Wise es una aplicación web diseñada para ayudarte a gestionar tus finan
   -  Abre tu navegador y navega a http://127.0.0.1:8000/.
 
 ## 📂 Estructura del proyecto
-walletwise/
+```walletwise/
 - admin_wallet_wise/      # Aplicación principal
    --migrations/         # Migraciones de la base de datos
    -- templates/          # Plantillas HTML
@@ -57,7 +57,7 @@ walletwise/
 - walletwise/             # Configuración principal de Django
 - manage.py
 - requirements.txt
-
+```
 ## 🎨 Diseño y UX
   - Uso de Bootstrap 5 para componentes modernos y responsivos.
   - Tarjetas de resumen financiero con gradientes y animaciones suaves.
