@@ -2,154 +2,31 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Wallet Wise</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <meta charset="UTF-8">
+    <title>Wallet Wise</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
 </head>
 <body>
-  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container">
-      <a class="navbar-brand" href="{% url 'dashboard' %}">Wallet Wise</a>
-      <div class="d-flex">
-        {% if user.is_authenticated %}
-          <span class="navbar-text me-3">Hola, {{ user.username }}</span>
-          <a href="{% url 'logout' %}" class="btn btn-outline-danger">Cerrar Sesión</a>
-        {% else %}
-          <a href="{% url 'login' %}" class="btn btn-outline-primary me-2">Iniciar Sesión</a>
-          <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#registerModal">Registrarse</button>
-        {% endif %}
-      </div>
+        <a class="navbar-brand" href="{% url 'dashboard' %}">Wallet Wise</a>
+        <div class="d-flex align-items-center gap-3">
+            {% if user.is_authenticated %}
+            <h4 class="mb-0">Bienvenido, {{ user.username }}</h4>
+            <a href="{% url 'logout' %}" class="btn-custom">Cerrar Sesión</a>
+            {% else %}
+            <a href="{% url 'login' %}" class="btn-custom me-2">Iniciar Sesión</a>
+            <a href="{% url 'register' %}" class="btn-custom">Registrarse</a>
+            {% endif %}
+        </div>
     </div>
-  </nav>
+</nav>
 
-  <div class="container mt-5">
-    {% block content %}
-  </div>
-
-  <div class="modal fade" id="registerModal" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Registrarse</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form id="registerForm">
-          {% csrf_token %}
-          <div class="mb-3">
-            <label for="username" class="form-label">Nombre de usuario</label>
-            <input type="text" class="form-control" id="username" name="username" required>
-          </div>
-          <div class="mb-3">
-            <label for="email" class="form-label">Correo electrónico</label>
-            <input type="email" class="form-control" id="email" name="email" required>
-          </div>
-          <div class="mb-3">
-            <label for="password1" class="form-label">Contraseña</label>
-            <input type="password" class="form-control" id="password1" name="password1" required>
-          </div>
-          <div class="mb-3">
-            <label for="password2" class="form-label">Confirmar contraseña</label>
-            <input type="password" class="form-control" id="password2" name="password2" required>
-          </div>
-          <div id="registerErrors" class="alert alert-danger d-none mb-3"></div>
-          <button type="submit" class="btn btn-success w-100" id="registerSubmitBtn">Registrarse</button>
-        </form>
-      </div>
-    </div>
-  </div>
+<div class="container mt-5">
+    {% block content %}{% endblock %}
 </div>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
- <script>
-// Implementación robusta para manejar el registro
-document.addEventListener('DOMContentLoaded', () => {
-    const registerForm = document.getElementById('registerForm');
-    const registerSubmitBtn = document.getElementById('registerSubmitBtn');
 
-    if (registerForm && registerSubmitBtn) {
-        registerForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            // Deshabilitar temporalmente el botón
-            registerSubmitBtn.disabled = true;
-            registerSubmitBtn.textContent = 'Registrando...';
-
-            // Obtener datos del formulario
-            const formData = new FormData(registerForm);
-
-            try {
-                // Usar Web Workers para manejar la solicitud en segundo plano
-                const registerWorker = new Worker('{% static "js/registerWorker.js" %}');
-
-                // Configurar el worker
-                registerWorker.postMessage({
-                    url: '{% url "register" %}',
-                    formData: Object.fromEntries(formData.entries())
-                });
-
-                // Manejar respuesta del worker
-                registerWorker.onmessage = (e) => {
-                    const result = e.data;
-
-                    if (result.success) {
-                        // Cerrar modal
-                        const registerModal = bootstrap.Modal.getInstance(document.getElementById('registerModal'));
-                        if (registerModal) registerModal.hide();
-
-                        // Redirigir
-                        window.location.href = result.redirect;
-                    } else {
-                        // Mostrar errores
-                        const errorDiv = document.getElementById('registerErrors');
-                        errorDiv.textContent = result.error || 'Error en el registro';
-                        errorDiv.classList.remove('d-none');
-                    }
-
-                    // Restaurar botón
-                    registerSubmitBtn.disabled = false;
-                    registerSubmitBtn.textContent = 'Registrarse';
-
-                    // Terminar el worker
-                    registerWorker.terminate();
-                };
-
-            } catch (error) {
-                console.error('Error al usar Web Worker:', error);
-
-                // Fallback: hacer la solicitud normalmente
-                try {
-                    const response = await fetch('{% url "register" %}', {
-                        method: 'POST',
-                        body: formData,
-                        headers: {'X-Requested-With': 'XMLHttpRequest'}
-                    });
-
-                    const result = await response.json();
-
-                    if (result.success) {
-                        const registerModal = bootstrap.Modal.getInstance(document.getElementById('registerModal'));
-                        if (registerModal) registerModal.hide();
-                        window.location.href = result.redirect;
-                    } else {
-                        const errorDiv = document.getElementById('registerErrors');
-                        errorDiv.textContent = result.error || 'Error en el registro';
-                        errorDiv.classList.remove('d-none');
-                    }
-                } catch (fallbackError) {
-                    console.error('Error en fallback:', fallbackError);
-                    const errorDiv = document.getElementById('registerErrors');
-                    errorDiv.textContent = 'Error crítico. Por favor recarga la página.';
-                    errorDiv.classList.remove('d-none');
-                } finally {
-                    registerSubmitBtn.disabled = false;
-                    registerSubmitBtn.textContent = 'Registrarse';
-                }
-            }
-        });
-    }
-});
-</script>
-{% endblock %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

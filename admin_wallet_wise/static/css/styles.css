@@ -1,160 +1,176 @@
     body {
-      background-color: #f9f9f9;
+      background-color: #F9FAFB;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       color: #333;
     }
 
-    h1, h2, h3 {
-      color: #2e3d26; /* Verde musgo oscuro */
+    .navbar {
+      background: linear-gradient(135deg, #1A3C40 0%, #2E7D32 100%);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      padding: 15px 0;
     }
 
-    /* Cards - Verde musgo uniforme */
+    .navbar-brand {
+      font-weight: 700;
+      font-size: 1.8rem;
+      color: white !important;
+      margin-left: 15px;
+    }
+
+    .navbar-content {
+      display: flex;
+      align-items: center;
+      gap: 20px; /* Más espacio entre elementos */
+      margin-right: 15px;
+    }
+
+    .welcome-text {
+      color: white;
+      font-size: 0.85rem; /* Texto más pequeño */
+      margin: 0;
+      padding: 5px 0;
+    }
+
+    .btn-outline-danger {
+      border-color: rgba(255, 255, 255, 0.5);
+      color: white;
+      font-size: 0.8rem; /* Texto más pequeño en el botón */
+      padding: 5px 10px;
+    }
+
+    .btn-outline-danger:hover {
+      background-color: rgba(255, 255, 255, 0.1);
+      border-color: white;
+    }
+
+    .btn-custom {
+  background-color: #1A3C40; /* mismo color que .botonMovimientos */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-custom:hover {
+  background-color: #2a5c50; /* mismo hover que .botonMovimientos */
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+    .balance-container {
+      background: linear-gradient(135deg, #1A3C40 0%, #2E7D32 100%);
+      color: white;
+      padding: 20px;
+      border-radius: 16px;
+      margin: 30px 0;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .balance-text {
+      margin: 0;
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+
+    .balance-amount {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-top: 5px;
+    }
+    .welcome-message {
+     display: flex;
+     align-items: center;
+     margin-right: 16px;
+     gap: 20px; /* <-- espacio entre texto y botón */
+}
+
+
+    .botonMovimientos {
+      background-color: #1A3C40;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      color: white;
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: inline;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .botonMovimientos:hover {
+      background-color: #2a5c50;
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    .dashboard-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .dashboard-header h1 {
+      font-weight: 700;
+      color: #1A3C40;
+      font-size: 2.2rem;
+      margin-bottom: 10px;
+    }
+
     .card {
       border-radius: 16px;
       box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
       transition: transform 0.2s ease, box-shadow 0.2s ease;
       border: none;
       overflow: hidden;
+      margin-bottom: 20px;
+      height: 100%;
     }
 
     .card:hover {
       transform: translateY(-5px);
       box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
     }
-
     .card-header {
-      background-color: #556B2F;
-      color: white;
+      background-color: #1A3C40;
+      color: #fff;
       font-weight: 600;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     }
 
     .card-body {
-      background-color: #f5f9f0;
+      background-color: #E8F5E9;
+      text-align: center;
+      padding: 20px;
     }
 
     .card-title {
-      color: #2e3d26;
+      color: #2E7D32;
       font-weight: 700;
-      font-size: 2.2rem;
-    }
-
-    .card-text {
-      color: #556B2F;
-      font-size: 1rem;
-    }
-
-    /* Botones */
-    .btn-success {
-      background-color: #556B2F;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 8px;
-    }
-
-    .btn-success:hover {
-      background-color: #6B8E23;
-    }
-
-    .btn-outline-danger {
-      color: #8a1c1c;
-      border-color: #8a1c1c;
-    }
-
-    .btn-outline-danger:hover {
-      background-color: #8a1c1c;
-      color: white;
-    }
-
-    /* Navegación */
-    .navbar {
-      background-color: #556B2F;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    }
-
-    .navbar-brand {
-      font-weight: 700;
-      font-size: 1.5rem;
-      letter-spacing: 0.5px;
-    }
-
-    .navbar-text {
-      color: rgba(255, 255, 255, 0.85) !important;
-    }
-
-    /* Contenedor principal */
-.container {
-  max-width: 1200px;
-  margin-left: auto;
-  margin-right: auto;
-  padding-left: 15px;   /* para evitar que se pegue a la izquierda */
-  padding-right: 15px;  /* igual que el padding izquierdo */
-}
-
-
-.dashboard-header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  max-width: 600px;
-  margin: 0 auto;
-  text-align: center;
-  height: 100%; /* o el alto deseado */
-}
-
-
-
-    .dashboard-header h1 {
-      font-weight: 700;
-      margin-bottom: 10px;
-    }
-
-    .dashboard-header p {
-      color: #6c757d;
-      max-width: 600px;
-      margin: 0 auto;
-    }
-
-    .welcome-message {
-      background: linear-gradient(to right, #556B2F, #6B8E23);
-      color: white;
-      padding: 20px;
-      border-radius: 12px;
-      margin-bottom: 30px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+      font-size: 1.8rem;
+      margin: 10px 0;
     }
 
     .summary-icon {
-      font-size: 2rem;
+      font-size: 2.2rem;
       margin-bottom: 15px;
-      color: #556B2F;
+      color: #2E7D32;
     }
 
-    /* Gráficos de ejemplo */
-    .chart-container {
-      background: white;
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-      margin-top: 30px;
-    }
-
-    .chart-placeholder {
-      height: 250px;
-      background: linear-gradient(to bottom, #f0f7e4, #e4efd4);
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #556B2F;
-      font-weight: 600;
-    }
-
-    /* Pie de página */
     .footer {
-      content-align: center;
       text-align: center;
       padding: 30px 0;
       margin-top: 50px;
@@ -171,160 +187,26 @@
       text-decoration: underline;
     }
 
-    /*Modal formulario*/
-
-      .modal {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      padding-top: 60px;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgba(0,0,0,0.4);
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
     }
 
-    .modal-content {
-      background-color: #f5f9f0;
-      margin: auto;
-      padding: 20px 30px;
-      border-radius: 12px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-      width: 90%;
-      max-width: 450px;
-      position: relative;
-      color: #2e3d26;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
-    .close {
-      color: #556B2F;
-      position: absolute;
-      top: 10px;
-      right: 15px;
-      font-size: 28px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    .close:hover {
-      color: #6B8E23;
+    .fade-in {
+      animation: fadeIn 1s ease forwards;
     }
 
-    .form-group {
-      margin-bottom: 15px;
-      display: flex;
-      flex-direction: column;
+    .fade-up {
+      animation: fadeUp 1s ease forwards;
     }
-
-    label {
-      font-weight: 600;
-      margin-bottom: 5px;
-    }
-
-    input[type="text"],
-    input[type="number"],
-    input[type="date"] {
-      padding: 8px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 1rem;
-    }
-
-    button.btn-success {
-      background-color: #556B2F;
-      border: none;
-      padding: 10px 18px;
-      border-radius: 8px;
-      font-weight: 700;
-      cursor: pointer;
-      color: white;
-      transition: background-color 0.3s ease;
-    }
-
-    button.btn-success:hover {
-      background-color: #6B8E23;
-    }
-
-    .notification {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  padding: 15px 25px;
-  border-radius: 5px;
-  color: white;
-  font-weight: bold;
-  z-index: 1000;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  transform: translateY(-100%);
-  opacity: 0;
-  transition: all 0.5s ease;
-}
-
-.notification.success {
-  background-color: #4CAF50;
-}
-
-.notification.error {
-  background-color: #f44336;
-}
-/* Añade esto a tu CSS */
-#registerErrors {
-    font-size: 0.9rem;
-    padding: 10px;
-    margin-top: 10px;
-    border-radius: 5px;
-}
-
-/* Animación para mostrar errores */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-#registerErrors:not(.d-none) {
-    animation: fadeIn 0.3s ease forwards;
-}
-
-/* Estilos para la sección de movimientos */
-#movementsSection {
-    transition: all 0.5s ease;
-}
-
-.filter-btn.active {
-    font-weight: bold;
-    transform: scale(1.05);
-    box-shadow: 0 0 5px rgba(0,0,0,0.2);
-}
-
-/* Colores para tipos de movimiento */
-.table-success { background-color: #d4edda !important; }
-.table-danger { background-color: #f8d7da !important; }
-.table-primary { background-color: #cce5ff !important; }
-.table-info { background-color: #d1ecf1 !important; }
-        /* Animaciones */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.fade-in {
-  animation: fadeIn 1s ease forwards;
-}
-
-.fade-up {
-  animation: fadeUp 1s ease forwards;
-}
-

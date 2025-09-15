@@ -1,19 +1,106 @@
-{% extends 'base.html' %}
+{% extends "base.html" %}
 {% load static %}
 
-{% block register %}
+{% block content %}
 <div class="row justify-content-center">
   <div class="col-md-6">
     <div class="card">
-      <div class="card-header">Registrarse</div>
+      <div class="card-header">Registrarse en Wallet Wise</div>
       <div class="card-body">
-        <form method="post">
+        <form id="registerForm" method="post" action="{% url 'register' %}">
           {% csrf_token %}
-          {{ form.as_p }}
-          <button type="submit" class="btn btn-success w-100">Registrar</button>
+
+          <div class="mb-3">
+            <label for="username" class="form-label">Nombre de usuario</label>
+            <input type="text" class="form-control" id="username" name="username" required>
+            <div class="text-danger" id="usernameError"></div>
+          </div>
+
+          <div class="mb-3">
+            <label for="email" class="form-label">Correo electrónico</label>
+            <input type="email" class="form-control" id="email" name="email" required>
+            <div class="text-danger" id="emailError"></div>
+          </div>
+
+          <div class="mb-3">
+            <label for="password1" class="form-label">Contraseña</label>
+            <input type="password" class="form-control" id="password1" name="password1" required>
+            <div class="text-danger" id="password1Error"></div>
+          </div>
+
+          <div class="mb-3">
+            <label for="password2" class="form-label">Confirmar contraseña</label>
+            <input type="password" class="form-control" id="password2" name="password2" required>
+            <div class="text-danger" id="password2Error"></div>
+          </div>
+
+          <div id="formErrors" class="alert alert-danger d-none"></div>
+
+          <button type="submit" class="btn btn-success w-100" id="registerSubmitBtn">Registrarse</button>
         </form>
+
+        <div class="text-center mt-3">
+          ¿Ya tienes una cuenta? <a href="{% url 'login' %}">Inicia sesión</a>
+        </div>
       </div>
     </div>
   </div>
 </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const registerForm = document.getElementById('registerForm');
+  const registerBtn = document.getElementById('registerSubmitBtn');
+  const errorDiv = document.getElementById('formErrors');
+
+  registerForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    // Reset errors
+    document.querySelectorAll('.text-danger').forEach(el => el.textContent = '');
+    errorDiv.classList.add('d-none');
+
+    registerBtn.disabled = true;
+    registerBtn.textContent = 'Registrando...';
+
+    try {
+      const formData = new FormData(registerForm);
+
+      const response = await fetch(registerForm.action, {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        // Redirigir después de registro exitoso
+        window.location.href = result.redirect;
+      } else {
+        // Mostrar errores de validación
+        if (result.errors) {
+          for (const [field, messages] of Object.entries(result.errors)) {
+            const errorElement = document.getElementById(field + 'Error');
+            if (errorElement) {
+              errorElement.textContent = messages.join(' ');
+            }
+          }
+        } else {
+          errorDiv.textContent = result.error || 'Error en el registro';
+          errorDiv.classList.remove('d-none');
+        }
+      }
+    } catch (err) {
+      errorDiv.textContent = 'Error de conexión. Intenta de nuevo.';
+      errorDiv.classList.remove('d-none');
+    } finally {
+      registerBtn.disabled = false;
+      registerBtn.textContent = 'Registrarse';
+    }
+  });
+});
+</script>
 {% endblock %}

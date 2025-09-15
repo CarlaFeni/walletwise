@@ -16,7 +16,8 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from admin_wallet_wise.views import register_view, login_view, logout_view, dashboard, add_movement, get_movements
+from admin_wallet_wise.views import register_view, login_view, logout_view, dashboard, add_movement, get_movements, \
+    delete_movement
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -26,4 +27,6 @@ urlpatterns = [
     path('', dashboard, name='dashboard'),
     path('movements/add/',add_movement, name='add_movement'),
     path('movements/get/', get_movements, name='get_movements'),
+    path('movements/delete/<int:movement_id>/', delete_movement, name='delete_movement'),
+
 ]

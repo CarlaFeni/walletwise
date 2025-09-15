@@ -3,8 +3,11 @@ from django.shortcuts import render
 # Create your views here.
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
+from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.utils import timezone
+from django.views.decorators.http import require_POST
+
 from .models import Movimiento
 from django.db.models import Sum, DecimalField
 from django.contrib.auth.models import User
@@ -145,17 +148,25 @@ def add_movement(request):
 
 
 def register_view(request):
+    # Si es GET, mostrar el formulario
+    if request.method == 'GET':
+        return render(request, 'register.html')
+
+    # Si es POST, procesar los datos
     if request.method == 'POST':
-        # Obtener datos como JSON si es posible
-        try:
-            if request.headers.get('Content-Type') == 'application/json':
-                data = json.loads(request.body)
-            else:
-                data = request.POST
-        except:
-            data = request.POST
+        # Verificar si es una solicitud AJAX
+        is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
 
         try:
+            if is_ajax:
+                # Intentar cargar JSON si el content-type es application/json
+                if request.headers.get('Content-Type') == 'application/json':
+                    data = json.loads(request.body)
+                else:
+                    data = request.POST
+            else:
+                data = request.POST
+
             username = data.get('username')
             email = data.get('email')
             password1 = data.get('password1')
@@ -163,28 +174,33 @@ def register_view(request):
 
             # Validaciones básicas
             if not all([username, email, password1, password2]):
-                return JsonResponse({
-                    'success': False,
-                    'error': 'Todos los campos son obligatorios'
-                }, status=400)
+                error_msg = 'Todos los campos son obligatorios'
+                if is_ajax:
+                    return JsonResponse({'success': False, 'error': error_msg}, status=400)
+                else:
+                    # Si no es AJAX, renderizamos de nuevo el formulario con el error
+                    return render(request, 'register.html', {'error': error_msg})
 
             if password1 != password2:
-                return JsonResponse({
-                    'success': False,
-                    'error': 'Las contraseñas no coinciden'
-                }, status=400)
+                error_msg = 'Las contraseñas no coinciden'
+                if is_ajax:
+                    return JsonResponse({'success': False, 'error': error_msg}, status=400)
+                else:
+                    return render(request, 'register.html', {'error': error_msg})
 
             if User.objects.filter(username=username).exists():
-                return JsonResponse({
-                    'success': False,
-                    'error': 'El nombre de usuario ya existe'
-                }, status=400)
+                error_msg = 'El nombre de usuario ya existe'
+                if is_ajax:
+                    return JsonResponse({'success': False, 'error': error_msg}, status=400)
+                else:
+                    return render(request, 'register.html', {'error': error_msg})
 
             if User.objects.filter(email=email).exists():
-                return JsonResponse({
-                    'success': False,
-                    'error': 'El correo electrónico ya está registrado'
-                }, status=400)
+                error_msg = 'El correo electrónico ya está registrado'
+                if is_ajax:
+                    return JsonResponse({'success': False, 'error': error_msg}, status=400)
+                else:
+                    return render(request, 'register.html', {'error': error_msg})
 
             # Crear usuario
             user = User.objects.create_user(username, email, password1)
@@ -193,22 +209,26 @@ def register_view(request):
             user = authenticate(request, username=username, password=password1)
             if user is not None:
                 login(request, user)
-                return JsonResponse({
-                    'success': True,
-                    'redirect': '/dashboard/'  # Usar URL directa
-                })
+                if is_ajax:
+                    dashboard_url = reverse('dashboard')
+                    return JsonResponse({'success': True, 'redirect': dashboard_url})
+                else:
+                    return redirect('dashboard')
             else:
-                return JsonResponse({
-                    'success': False,
-                    'error': 'Error al iniciar sesión automáticamente'
-                }, status=500)
+                error_msg = 'Error al iniciar sesión automáticamente'
+                if is_ajax:
+                    return JsonResponse({'success': False, 'error': error_msg}, status=500)
+                else:
+                    return render(request, 'register.html', {'error': error_msg})
 
         except Exception as e:
-            return JsonResponse({
-                'success': False,
-                'error': f'Error interno: {str(e)}'
-            }, status=500)
+            error_msg = f'Error interno: {str(e)}'
+            if is_ajax:
+                return JsonResponse({'success': False, 'error': error_msg}, status=500)
+            else:
+                return render(request, 'register.html', {'error': error_msg})
 
+    # Si no es GET ni POST, devolver error método no permitido
     return JsonResponse({
         'success': False,
         'error': 'Método no permitido'
@@ -238,30 +258,94 @@ def logout_view(request):
 
 
 def get_movements(request):
-    if not request.user.is_authenticated:
-        return JsonResponse({'movimientos': []}, status=401)
+    filtro = request.GET.get('filter', 'all')
+    user = request.user
 
-    filter_type = request.GET.get('filter', 'all')
+    movimientos = Movimiento.objects.filter(usuario=user)
 
-    # Filtrar movimientos del usuario actual
-    if filter_type == 'all':
-        movements = Movimiento.objects.filter(
-            usuario=request.user
-        ).order_by('-fecha')
-    else:
-        movements = Movimiento.objects.filter(
-            usuario=request.user,
-            tipo=filter_type
-        ).order_by('-fecha')
+    # Mapear filtros frontend a tipos del modelo
+    filter_mapping = {
+        'entradas': 'entrada',
+        'salidas': 'salida',
+        'inversiones': 'inversion'
+    }
 
-    # Serializar los datos
-    movimientos_data = []
-    for mov in movements:
-        movimientos_data.append({
-            'fecha': mov.fecha.isoformat(),
-            'nombre': mov.nombre,
-            'tipo': mov.tipo,
-            'monto': str(mov.monto)  # Convertir a string para serialización
-        })
+    if filtro != 'all':
+        tipo_filtro = filter_mapping.get(filtro, filtro)
+        movimientos = movimientos.filter(tipo=tipo_filtro)
 
-    return JsonResponse({'movimientos': movimientos_data})
+    data = {
+        "movimientos": [
+            {
+                "id": m.id,
+                "fecha": m.fecha.isoformat(),
+                "tipo": m.get_tipo_display(),
+                "monto": float(m.monto),
+            }
+            for m in movimientos.order_by('-fecha')
+        ]
+    }
+    return JsonResponse(data)
+def calcular_total(tipo, user=None):
+    """
+    Calcula el total de un tipo de movimiento específico para el usuario.
+    tipos válidos: 'entradas', 'salidas', 'ahorro', 'inversiones'
+    """
+    if user is None:
+        return 0
+
+    tipo_mapping = {
+        "entradas": "entrada",
+        "salidas": "salida",
+        "ahorro": "ahorro",
+        "inversiones": "inversion",
+    }
+
+    tipo_modelo = tipo_mapping.get(tipo)
+    if not tipo_modelo:
+        return 0
+
+    total = Movimiento.objects.filter(
+        usuario=user,
+        tipo=tipo_modelo
+    ).aggregate(Sum("monto"))["monto__sum"] or Decimal("0")
+
+    return float(total)
+
+
+def calcular_saldo_total(user=None):
+    """
+    Calcula el saldo total = entradas - salidas para el usuario.
+    """
+    if user is None:
+        return 0
+
+    entradas = calcular_total("entradas", user)
+    salidas = calcular_total("salidas", user)
+
+    return float(entradas - salidas)
+
+@csrf_exempt
+def delete_movement(request, movement_id):
+    if request.method == "POST":
+        if not request.user.is_authenticated:
+            return JsonResponse({"success": False, "error": "Usuario no autenticado"}, status=401)
+
+        try:
+            mov = Movimiento.objects.get(id=movement_id, usuario=request.user)
+            mov.delete()
+
+            # Recalcular totales después de borrar SOLO para el usuario actual
+            new_values = {
+                "saldo_total": calcular_saldo_total(request.user),
+                "entradas": calcular_total("entradas", request.user),
+                "salidas": calcular_total("salidas", request.user),
+                "ahorro": calcular_total("ahorro", request.user),
+                "inversiones": calcular_total("inversiones", request.user),
+            }
+
+            return JsonResponse({"success": True, "new_values": new_values})
+        except Movimiento.DoesNotExist:
+            return JsonResponse({"success": False, "error": "Movimiento no encontrado"}, status=404)
+
+    return JsonResponse({"success": False, "error": "Método no permitido"}, status=405)
