@@ -47,16 +47,16 @@ Wallet Wise es una aplicación web diseñada para ayudarte a gestionar tus finan
 
 ## 📂 Estructura del proyecto
 walletwise/
-├── admin_wallet_wise/      # Aplicación principal
-│   ├── migrations/         # Migraciones de la base de datos
-│   ├── templates/          # Plantillas HTML
-│   ├── static/             # Archivos CSS e imágenes
-│   ├── models.py           # Modelos de la base de datos
-│   ├── views.py            # Vistas y lógica del backend
-│   └── urls.py             # Rutas de la aplicación
-├── walletwise/             # Configuración principal de Django
-├── manage.py
-└── requirements.txt
+- admin_wallet_wise/      # Aplicación principal
+   --migrations/         # Migraciones de la base de datos
+   -- templates/          # Plantillas HTML
+   -- static/             # Archivos CSS e imágenes
+   -- models.py           # Modelos de la base de datos
+   -- views.py            # Vistas y lógica del backend
+   -- urls.py             # Rutas de la aplicación
+- walletwise/             # Configuración principal de Django
+- manage.py
+- requirements.txt
 
 ## 🎨 Diseño y UX
   - Uso de Bootstrap 5 para componentes modernos y responsivos.
