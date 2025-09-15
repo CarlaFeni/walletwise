@@ -91,11 +91,13 @@ def add_movement(request):
             if not tipo_modelo:
                 raise ValidationError(f'Tipo de movimiento inválido: {tipo}')
 
+            nombre = request.POST.get('nombre')  # recoger el campo
+
             # Crear nuevo movimiento
             movimiento = Movimiento(
                 usuario=request.user,
                 tipo=tipo_modelo,
-                #nombre=nombre,
+                nombre=nombre,
                 monto=monto,
                 fecha=fecha
             )
@@ -277,10 +279,11 @@ def get_movements(request):
     data = {
         "movimientos": [
             {
-                "id": m.id,
-                "fecha": m.fecha.isoformat(),
-                "tipo": m.get_tipo_display(),
-                "monto": float(m.monto),
+                'id': m.id,
+                'tipo': m.tipo,
+                'nombre': m.nombre,  # <--- incluir
+                'monto': float(m.monto),
+                'fecha': m.fecha
             }
             for m in movimientos.order_by('-fecha')
         ]

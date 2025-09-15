@@ -79,6 +79,7 @@
                 <tr>
                     <th>Fecha</th>
                     <th>Tipo</th>
+                    <th>Nombre</th>
                     <th>Monto</th>
                     <th>Acciones</th>
                 </tr>
@@ -381,6 +382,7 @@
             <tr data-id="${mov.id}">
               <td>${new Date(mov.fecha).toLocaleDateString()}</td>
               <td>${mov.tipo}</td>
+              <td>${mov.nombre}</td>
               <td>$${parseFloat(mov.monto).toFixed(2)}</td>
               <td>
                 <button class="btn btn-sm btn-danger delete-movement" data-id="${mov.id}">
