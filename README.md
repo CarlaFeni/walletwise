@@ -28,7 +28,7 @@ Wallet Wise es una aplicación web diseñada para ayudarte a gestionar tus finan
 ## 📦 Instalación
 
 1. Clona el repositorio:
-  git clone https://github.com/tu-usuario/walletwise.git
+  git clone https://github.com/CarlaFeni/walletwise.git
   cd walletwise
 2. Crea un entorno virtual e instala dependencias:
   python -m venv venv
