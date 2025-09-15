@@ -6,11 +6,14 @@
     <title>Wallet Wise</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container">
-        <a class="navbar-brand" href="{% url 'dashboard' %}">Wallet Wise</a>
+        <a class="navbar-brand" href="{% url 'dashboard' %}">
+            <img src="{% static 'images/logoWallet.png' %}" alt="WalletWise" height="70">
+        </a>
         <div class="d-flex align-items-center gap-3">
             {% if user.is_authenticated %}
             <h4 class="mb-0">Bienvenido, {{ user.username }}</h4>

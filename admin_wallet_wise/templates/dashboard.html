@@ -52,7 +52,7 @@
             </div>
         </div>
     </div>
-        <div class="welcome-message fade-in">
+    <div class="welcome-message fade-in">
         <p class="mb-0">Tu saldo actual es de <strong>${{ saldo_total|floatformat:2 }}</strong></p>
         <button id="viewMovementsBtn" class="botonMovimientos btn">
             <i class="bi bi-list-check"></i> Ver Todos los Movimientos
@@ -64,7 +64,7 @@
 <div id="movementsSection" class="fade-up mt-4" style="display: none; animation-delay: 0.3s;">
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <h3 class="mb-0 text-white">Todos los Movimientos</h3>
+            <h3 class="mb-0 text-white">Todos los movimientos</h3>
             <div class="btn-group">
                 <button class="btn btn-outline-secondary filter-btn active" data-filter="all">Todos</button>
                 <button class="btn btn-outline-success filter-btn" data-filter="entradas">Entradas</button>
@@ -93,61 +93,64 @@
 
 <!-- Modal mejorado para añadir movimientos -->
 <div class="modal fade" id="movementModal" tabindex="-1" aria-labelledby="movementModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content rounded-4 shadow">
-      <div class="modal-header border-bottom-0">
-        <h5 class="modal-title" id="movementModalLabel">Añadir movimiento</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <form id="movementForm">
-        <div class="modal-body py-0">
-          <!-- Campo oculto para el tipo de movimiento -->
-          <input type="hidden" id="movementType" name="movementType">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-4 shadow">
+            <div class="modal-header border-bottom-0">
+                <h5 class="modal-title" id="movementModalLabel">Añadir movimiento</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form id="movementForm">
+                <div class="modal-body py-0">
+                    <!-- Campo oculto para el tipo de movimiento -->
+                    <input type="hidden" id="movementType" name="movementType">
 
-          <div class="form-floating mb-3">
-            <input type="text" class="form-control" id="movementName" name="movementName" placeholder="Nombre" required>
-            <label for="movementName">Nombre</label>
-          </div>
+                    <div class="form-floating mb-3">
+                        <input type="text" class="form-control" id="movementName" name="movementName"
+                               placeholder="Nombre" required>
+                        <label for="movementName">Nombre</label>
+                    </div>
 
-          <div class="form-floating mb-3">
-            <input type="number" step="0.01" class="form-control" id="movementAmount" name="movementAmount" placeholder="Cantidad" required>
-            <label for="movementAmount">Cantidad</label>
-          </div>
+                    <div class="form-floating mb-3">
+                        <input type="number" step="0.01" class="form-control" id="movementAmount" name="movementAmount"
+                               placeholder="Cantidad" required>
+                        <label for="movementAmount">Cantidad</label>
+                    </div>
 
-          <div class="form-floating mb-3">
-            <input type="date" class="form-control" id="movementDate" name="movementDate" required>
-            <label for="movementDate">Fecha</label>
-          </div>
+                    <div class="form-floating mb-3">
+                        <input type="date" class="form-control" id="movementDate" name="movementDate" required>
+                        <label for="movementDate">Fecha</label>
+                    </div>
+                </div>
+                <div class="modal-footer flex-column border-top-0">
+                    <button type="submit" class="btn-custom btn-lg w-100 mx-0 mb-2">Guardar movimiento</button>
+                </div>
+            </form>
         </div>
-        <div class="modal-footer flex-column border-top-0">
-          <button type="submit" class="btn btn-lg btn-primary w-100 mx-0 mb-2">Guardar movimiento</button>
-        </div>
-      </form>
     </div>
-  </div>
 </div>
 
 <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content rounded-3 shadow">
-      <div class="modal-header bg-danger text-white">
-        <h5 class="modal-title" id="deleteConfirmLabel">Confirmar eliminación</h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-      </div>
-      <div class="modal-body">
-        ¿Estás seguro de que deseas eliminar este movimiento?
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-        <button type="button" id="confirmDeleteBtn" class="btn btn-danger">Eliminar</button>
-      </div>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-3 shadow">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteConfirmLabel">Confirmar eliminación</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+                ¿Estás seguro de que deseas eliminar este movimiento?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" id="confirmDeleteBtn" class="btn btn-danger">Eliminar</button>
+            </div>
+        </div>
     </div>
-  </div>
 </div>
 
 <div class="footer fade-in" style="animation-delay: 1.2s;">
     <div class="container">
-        <p>© 2023 Wallet Wise - Todos los derechos reservados</p>
+        <p>© 2025 Wallet Wise - Todos los derechos reservados</p>
         <p><a href="#">Política de Privacidad</a> | <a href="#">Términos de Servicio</a> | <a href="#">Soporte</a></p>
     </div>
 </div>
